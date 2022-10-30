@@ -16,14 +16,15 @@ namespace MCT.Functions
     public class ExportMealsByClass
     {
         [FunctionName("ExportMealsByClass")]
-        public async Task Run([TimerTrigger("0 10 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 1 * * * *")] TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
+            if (myTimer.IsPastDue)
+            {
+                log.LogInformation("Timer is running late!");
+            }
             try
             {
-                log.LogInformation("GetMealsByClass function");
-
+                log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
                 var connectionString = Environment.GetEnvironmentVariable("CosmosConectionString");
 
                 CosmosClientOptions options = new CosmosClientOptions()
@@ -61,7 +62,7 @@ namespace MCT.Functions
                         foreach (var item in response)
                         {
                             //check for yesterday
-                            if(item.Date.ToString("dd-MM-yyyy") == DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy"))
+                            if (item.Date.ToString("dd-MM-yyyy") == DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy"))
                             {
                                 meals.Add(new Meal()
                                 {
@@ -92,7 +93,7 @@ namespace MCT.Functions
                     await blobClient.UploadAsync(csvFileName);
                 }
 
-               
+
             }
             catch (System.Exception ex)
             {
