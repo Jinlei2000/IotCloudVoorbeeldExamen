@@ -38,7 +38,7 @@ namespace MCT.Functions
                 List<string> classTags = new List<string>();
 
                 var container = cosmosClient.GetContainer("registrationmeals", "childern");
-                string sql = $"SELECT c.ClassTag FROM c";
+                string sql = $"SELECT DISTINCT c.ClassTag FROM c";
                 var iterator = container.GetItemQueryIterator<List<string>>(sql);
                 while (iterator.HasMoreResults)
                 {
@@ -47,10 +47,7 @@ namespace MCT.Functions
                     {
                         foreach (var tag in item)
                         {
-                            if (!classTags.Contains(tag))
-                            {
-                                classTags.Add(tag);
-                            }
+                            classTags.Add(tag);
                         }
                     }
                 }
