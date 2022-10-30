@@ -8,22 +8,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.Azure.Cosmos;
-using System.Diagnostics;
-using IotCloudVoorbeeldExamen.Models;
 using System.Collections.Generic;
+using IotCloudVoorbeeldExamen.Models;
 
 namespace MCT.Functions
 {
-    public static class GetChildren
+    public static class GetMealsByChild
     {
-        [FunctionName("GetChildren")]
+        [FunctionName("GetMealsByChild")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "childern")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "childern/{childId}/meals")] HttpRequest req,
+            string childId,
             ILogger log)
         {
             try
             {
-                log.LogInformation("GetChildren function");
+                log.LogInformation("GetMealsByChild function");
 
                 var connectionString = Environment.GetEnvironmentVariable("CosmosConectionString");
 
@@ -34,10 +34,10 @@ namespace MCT.Functions
 
                 var cosmosClient = new CosmosClient(connectionString, options);
 
-                List<Child> childern = new List<Child>();
+                List<Meal> meals = new List<Meal>();
 
                 var container = cosmosClient.GetContainer("registrationmeals", "childern");
-                string sql = "SELECT * FROM c";
+                string sql = $"SELECT c.Meals FROM c WHERE c.id = '{childId}'";
 
                 var iterator = container.GetItemQueryIterator<Child>(sql);
                 while (iterator.HasMoreResults)
@@ -45,25 +45,26 @@ namespace MCT.Functions
                     var response = await iterator.ReadNextAsync();
                     foreach (var item in response)
                     {
-                        childern.Add(new Child()
+                        foreach (var meal in item.Meals)
                         {
-                            Id = item.Id,
-                            StudBookNumber = item.StudBookNumber,
-                            ClassTag = item.ClassTag,
-                            FirstName = item.FirstName,
-                            LastName = item.LastName,
-                            EmailAdult = item.EmailAdult,
-                            Meals = item.Meals
-                        });
+                            meals.Add(new Meal()
+                            {
+                                Id = meal.Id,
+                                MealCategory = meal.MealCategory,
+                                Date = meal.Date
+                            });
+                        }
                     }
                 }
-                return new CreatedResult($"/childern/", childern);
+
+                return new OkObjectResult(meals);
             }
             catch (System.Exception ex)
             {
                 log.LogError(ex.Message);
                 return new StatusCodeResult(500);
             }
+
         }
     }
 }

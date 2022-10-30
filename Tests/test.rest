@@ -1,0 +1,35 @@
+GET http://localhost:7071/api/childern HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST http://localhost:7071/api/childern HTTP/1.1
+Content-Type: application/json
+
+{
+    "FirstName": "pppp",
+    "LastName": "pppp",
+    "EmailAdult": "jinleix3@hotmail.com",
+    "ClassTag": "1A",
+    "StudBookNumber": "K000003",
+}
+
+### 
+
+POST http://localhost:7071/api/childern/589c11a2-0bb1-4d5a-ab63-c0df34b148c0/meals HTTP/1.1
+Content-Type: application/json
+
+{ 
+    "Meal": "lunch",
+    "Date": "2022-10-10T12:00:00.000Z"
+}
+
+### 
+
+GET http://localhost:7071/api/childern/589c11a2-0bb1-4d5a-ab63-c0df34b148c0/meals HTTP/1.1
+Content-Type: application/json
+
+### 
+
+GET http://localhost:7071/api/childern/class/1A HTTP/1.1
+Content-Type: application/json
