@@ -24,6 +24,6 @@ namespace IotCloudVoorbeeldExamen.Models
         [JsonProperty(PropertyName = "Meal", NullValueHandling = NullValueHandling.Ignore)]
         public string MealCategory { get; set; }
         [JsonProperty(PropertyName = "Date", NullValueHandling = NullValueHandling.Ignore)]
-        public string Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }
