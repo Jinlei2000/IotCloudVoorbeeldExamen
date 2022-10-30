@@ -45,9 +45,12 @@ namespace MCT.Functions
                     var response = await iterator.ReadNextAsync();
                     foreach (var item in response)
                     {
-                        foreach (var classTag in item)
+                        foreach (var tag in item)
                         {
-                            classTags.Add(classTag);
+                            if (!classTags.Contains(tag))
+                            {
+                                classTags.Add(tag);
+                            }
                         }
                     }
                 }
