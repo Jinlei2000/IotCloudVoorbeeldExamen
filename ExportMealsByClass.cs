@@ -48,9 +48,12 @@ namespace MCT.Functions
                         foreach (var tag in item)
                         {
                             classTags.Add(tag);
+                            log.LogInformation($"ClassTag: {tag}");
                         }
                     }
                 }
+                log.LogInformation("Found " + classTags.Count + " classes");
+
 
                 foreach (var classTag in classTags)
                 {
@@ -74,26 +77,31 @@ namespace MCT.Functions
                         }
                     }
 
-                    string containerName = $"M{DateTime.Now.ToString("yyyyMMddHHmmss")}";
-                    string csvFileName = $"{classTag}.csv";
-
-                    // make a new container
-                    BlobServiceClient blobServiceClient = new BlobServiceClient(Environment.GetEnvironmentVariable("BlobStorageConnectionString"));
-                    BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
-                    // make a new blob
-                    BlobClient blobClient = containerClient.GetBlobClient($"{DateTime.Now.ToString("yyyyMMddHHmmss")}");
-                    //upload the csv file
-                    using (var writer = new StreamWriter(csvFileName))
+                    if (meals.Count > 0)
                     {
-                        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                        string containerName = $"M{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+                        string csvFileName = $"{classTag}.csv";
+
+                        // make a new container
+                        BlobServiceClient blobServiceClient = new BlobServiceClient(Environment.GetEnvironmentVariable("BlobStorageConnectionString"));
+                        BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
+                        // make a new blob
+                        BlobClient blobClient = containerClient.GetBlobClient($"{DateTime.Now.ToString("yyyyMMddHHmmss")}");
+                        //upload the csv file
+                        using (var writer = new StreamWriter(csvFileName))
                         {
-                            csv.WriteRecords(meals);
+                            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                            {
+                                csv.WriteRecords(meals);
+                            }
                         }
+                        await blobClient.UploadAsync(csvFileName);
                     }
-                    await blobClient.UploadAsync(csvFileName);
+                    else
+                    {
+                        log.LogInformation("No meals found today form this class: " + classTag);
+                    }
                 }
-
-
             }
             catch (System.Exception ex)
             {
