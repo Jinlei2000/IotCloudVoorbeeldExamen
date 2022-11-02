@@ -8,12 +8,18 @@ namespace IotCloudVoorbeeldExamen.Models
     {
         [JsonProperty(PropertyName = "id", NullValueHandling = NullValueHandling.Ignore)]
         public Guid Id { get; set; }
+        [JsonProperty(PropertyName = "StudBookNumber", NullValueHandling = NullValueHandling.Ignore)]
         public string StudBookNumber { get; set; }
-        public string ClassTag { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string EmailAdult { get; set; }
+        [JsonProperty(PropertyName = "ClassTag", NullValueHandling = NullValueHandling.Ignore)]
 
+        public string ClassTag { get; set; }
+        [JsonProperty(PropertyName = "FirstName", NullValueHandling = NullValueHandling.Ignore)]
+        public string FirstName { get; set; }
+        [JsonProperty(PropertyName = "LastName", NullValueHandling = NullValueHandling.Ignore)]
+        public string LastName { get; set; }
+        [JsonProperty(PropertyName = "EmailAdult", NullValueHandling = NullValueHandling.Ignore)]
+        public string EmailAdult { get; set; }
+        [JsonProperty(PropertyName = "Meals", NullValueHandling = NullValueHandling.Ignore)]
         public List<Meal> Meals { get; set; }
     }
 

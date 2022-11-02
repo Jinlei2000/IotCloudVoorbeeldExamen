@@ -16,17 +16,17 @@ Content-Type: application/json
 
 ### 
 
-POST http://localhost:7071/api/childern/589c11a2-0bb1-4d5a-ab63-c0df34b148c0/meals HTTP/1.1
+POST http://localhost:7071/api/childern/55e7e88e-f2b4-4a42-aab9-cafb2861e8af/meals HTTP/1.1
 Content-Type: application/json
 
 { 
-    "Meal": "lunch",
-    "Date": "2022-10-10T12:00:00.000Z"
+    "Meal": "okkkk",
+    "Date": "2022-11-01T12:00:00.000Z"
 }
 
 ### 
 
-GET http://localhost:7071/api/childern/589c11a2-0bb1-4d5a-ab63-c0df34b148c0/meals HTTP/1.1
+GET http://localhost:7071/api/childern/55e7e88e-f2b4-4a42-aab9-cafb2861e8af/meals HTTP/1.1
 Content-Type: application/json
 
 ### 

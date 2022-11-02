@@ -1,30 +1,30 @@
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs;
-using CsvHelper;
-using IotCloudVoorbeeldExamen.Models;
-using Microsoft.Azure.Cosmos;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Microsoft.Azure.Cosmos;
+using System.Collections.Generic;
+using IotCloudVoorbeeldExamen.Models;
+using CsvHelper;
+using System.Globalization;
+using Azure.Storage.Blobs;
 
 namespace MCT.Functions
 {
-    public class ExportMealsByClass
+    public static class GetTest
     {
-        [FunctionName("ExportMealsByClass")]
-        public async Task Run([TimerTrigger("0 0 1 * * *")] TimerInfo myTimer, ILogger log)
+        [FunctionName("GetTest")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "test")] HttpRequest req,
+            ILogger log)
         {
-            if (myTimer.IsPastDue)
-            {
-                log.LogInformation("Timer is running late!");
-            }
             try
             {
-                log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
                 var connectionString = Environment.GetEnvironmentVariable("CosmosConectionString");
 
                 CosmosClientOptions options = new CosmosClientOptions()
@@ -34,7 +34,6 @@ namespace MCT.Functions
 
                 var cosmosClient = new CosmosClient(connectionString, options);
 
-                List<Meal> meals = new List<Meal>();
                 List<string> classTags = new List<string>();
 
                 var container = cosmosClient.GetContainer("registrationmeals", "childern");
@@ -49,6 +48,7 @@ namespace MCT.Functions
                     }
                 }
 
+                List<Meal> meals = new List<Meal>();
                 foreach (var classTag in classTags)
                 {
                     sql = $"SELECT c.Meals FROM c WHERE c.ClassTag = '{classTag}'";
@@ -73,7 +73,6 @@ namespace MCT.Functions
                             }
                         }
                     }
-
                     if (meals.Count > 0)
                     {
                         string containerName = $"M{DateTime.Now.ToString("yyyyMMdd")}";
@@ -100,11 +99,15 @@ namespace MCT.Functions
                         log.LogInformation("No meals found today form this class: " + classTag);
                     }
                 }
+                return new OkObjectResult("stop");
             }
             catch (System.Exception ex)
             {
                 log.LogError(ex.Message);
+                return new BadRequestObjectResult(ex.Message);
             }
+
+
         }
     }
 }
