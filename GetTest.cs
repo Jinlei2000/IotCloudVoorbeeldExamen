@@ -47,7 +47,7 @@ namespace MCT.Functions
                         classTags.Add(child.ClassTag);
                     }
                 }
-
+                // List<bool> test = new List<bool>();
                 List<Meal> meals = new List<Meal>();
                 foreach (var classTag in classTags)
                 {
@@ -61,6 +61,7 @@ namespace MCT.Functions
                             foreach (var meal in item.Meals)
                             {
                                 //check for yesterday
+                                // test.Add(meal.Date.ToString("dd-MM-yyyy") == DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy"));
                                 if (meal.Date.ToString("dd-MM-yyyy") == DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy"))
                                 {
                                     meals.Add(new Meal()
@@ -73,6 +74,7 @@ namespace MCT.Functions
                             }
                         }
                     }
+                    // return new OkObjectResult(test);
                     if (meals.Count > 0)
                     {
                         string containerName = $"M{DateTime.Now.ToString("yyyyMMdd")}";
