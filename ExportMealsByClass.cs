@@ -10,6 +10,8 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace MCT.Functions
 {
@@ -25,6 +27,26 @@ namespace MCT.Functions
             try
             {
                 log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+
+                // Get the connection string from app settings and use it to create a container client.
+                string storageConnectionString = Environment.GetEnvironmentVariable("StorageConnectionString");
+
+                //get the storage account.
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
+
+                //create the blob client.
+                CloudBlobClient blobClient2 = storageAccount.CreateCloudBlobClient();
+
+                // name of the container
+                string containerName = "m" + DateTime.Now.ToString("yyyyMMdd");
+                // string containerName = "M" + DateTime.Now.ToString("yyyyMMdd");
+
+                //get a reference to a container to use for the sample code
+                CloudBlobContainer container2 = blobClient2.GetContainerReference(containerName);
+
+                //create the container if it doesn't already exist.
+                await container2.CreateIfNotExistsAsync();
+
                 var connectionString = Environment.GetEnvironmentVariable("CosmosConectionString");
 
                 CosmosClientOptions options = new CosmosClientOptions()
@@ -76,16 +98,9 @@ namespace MCT.Functions
 
                     if (meals.Count > 0)
                     {
-                        string containerName = $"M{DateTime.Now.ToString("yyyyMMdd")}";
                         string csvFileName = $"{classTag}.csv";
 
-                        string connectionStringBlob = Environment.GetEnvironmentVariable("BlobStorageConnectionString");
-                        // make a new container
-                        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionStringBlob);
-                        BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
-                        // make a new blob
-                        BlobClient blobClient = containerClient.GetBlobClient(containerName);
-                        //upload the csv file
+                        //make csv file
                         using (var writer = new StreamWriter(csvFileName))
                         {
                             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
@@ -93,7 +108,10 @@ namespace MCT.Functions
                                 csv.WriteRecords(meals);
                             }
                         }
-                        await blobClient.UploadAsync(csvFileName);
+
+                        //upload the csv file
+                        CloudBlockBlob blockBlob = container2.GetBlockBlobReference(containerName);
+                        await blockBlob.UploadFromFileAsync(csvFileName);
                     }
                     else
                     {
