@@ -31,21 +31,13 @@ namespace MCT.Functions
                 // Get the connection string from app settings and use it to create a container client.
                 string storageConnectionString = Environment.GetEnvironmentVariable("StorageConnectionString");
 
-                //get the storage account.
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageConnectionString);
-
-                //create the blob client.
-                CloudBlobClient blobClient2 = storageAccount.CreateCloudBlobClient();
-
-                // name of the container
+                // // name of the container
                 string containerName = "m" + DateTime.Now.ToString("yyyyMMdd");
-                // string containerName = "M" + DateTime.Now.ToString("yyyyMMdd");
 
-                //get a reference to a container to use for the sample code
-                CloudBlobContainer container2 = blobClient2.GetContainerReference(containerName);
+                // Get a reference to a container named "containerName" and then create it
+                BlobContainerClient containerBlob = new BlobContainerClient(storageConnectionString, containerName);
+                await containerBlob.CreateIfNotExistsAsync();
 
-                //create the container if it doesn't already exist.
-                await container2.CreateIfNotExistsAsync();
 
                 var connectionString = Environment.GetEnvironmentVariable("CosmosConectionString");
 
@@ -109,9 +101,11 @@ namespace MCT.Functions
                             }
                         }
 
-                        //upload the csv file
-                        CloudBlockBlob blockBlob = container2.GetBlockBlobReference(containerName);
-                        await blockBlob.UploadFromFileAsync(csvFileName);
+                        // Get a reference to a blob named "csvFileName" in a container named "containerName"
+                        BlobClient blob = containerBlob.GetBlobClient(csvFileName);
+
+                        // Upload csv file
+                        await blob.UploadAsync(csvFileName);
                     }
                     else
                     {
