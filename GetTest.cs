@@ -75,6 +75,7 @@ namespace MCT.Functions
                                 //check for yesterday
                                 if (meal.Date.ToString("dd-MM-yyyy") == DateTime.Now.AddDays(-1).ToString("dd-MM-yyyy"))
                                 {
+
                                     meals.Add(new Meal()
                                     {
                                         Id = meal.Id,
@@ -109,12 +110,13 @@ namespace MCT.Functions
 
                         // Delete File
                         File.Delete(localFilePath);
-
                     }
                     else
                     {
                         log.LogInformation("No meals found today form this class: " + classTag);
                     }
+                    //clear list
+                    meals.Clear();
                 }
                 return new OkObjectResult("test");
             }

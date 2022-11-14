@@ -117,6 +117,8 @@ namespace MCT.Functions
                     {
                         log.LogInformation("No meals found today form this class: " + classTag);
                     }
+                    //clear list
+                    meals.Clear();
                 }
             }
             catch (System.Exception ex)
