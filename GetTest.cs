@@ -87,7 +87,7 @@ namespace MCT.Functions
                     }
                     if (meals.Count > 0)
                     {
-                        string csvFileName = $"{classTag}.csv";
+                        string csvFileName = $"{Path.GetTempPath()}{classTag}.csv";
 
                         //make csv file
                         using (var writer = new StreamWriter(csvFileName))
