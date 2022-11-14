@@ -93,7 +93,7 @@ namespace MCT.Functions
                         string localFilePath = $"{Path.GetTempPath()}{csvFileName}";
 
                         //make csv file
-                        using (var writer = new StreamWriter(csvFileName))
+                        using (var writer = new StreamWriter(localFilePath))
                         {
                             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                             {
