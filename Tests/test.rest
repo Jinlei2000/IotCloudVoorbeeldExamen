@@ -20,7 +20,7 @@ POST http://localhost:7071/api/childern/55e7e88e-f2b4-4a42-aab9-cafb2861e8af/mea
 Content-Type: application/json
 
 { 
-    "Meal": "ttttt",
+    "Meal": "ccc",
     "Date": "2022-11-12T12:00:00.000Z"
 }
 
