@@ -102,7 +102,7 @@ namespace MCT.Functions
                         }
 
                         // Get a reference to a blob named "csvFileName" in a container named "containerName"
-                        BlobClient blob = containerBlob.GetBlobClient(csvFileName);
+                        BlobClient blob = containerBlob.GetBlobClient(localFilePath);
 
                         // Upload csv file
                         await blob.UploadAsync(localFilePath);

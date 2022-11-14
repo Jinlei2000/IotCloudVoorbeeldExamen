@@ -90,7 +90,10 @@ namespace MCT.Functions
 
                     if (meals.Count > 0)
                     {
-                        string csvFileName = $"{Path.GetTempPath()}{classTag}.csv";
+                        string csvFileName = $"{classTag}.csv";
+
+                        // Get temporarily path on your pc
+                        string localFilePath = $"{Path.GetTempPath()}{csvFileName}";
 
                         //make csv file
                         using (var writer = new StreamWriter(csvFileName))
@@ -105,7 +108,10 @@ namespace MCT.Functions
                         BlobClient blob = containerBlob.GetBlobClient(csvFileName);
 
                         // Upload csv file
-                        await blob.UploadAsync(csvFileName);
+                        await blob.UploadAsync(localFilePath);
+
+                        // Delete File
+                        File.Delete(localFilePath);
                     }
                     else
                     {
